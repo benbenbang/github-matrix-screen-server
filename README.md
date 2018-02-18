@@ -4,7 +4,7 @@ The GitHub [Matrix](http://en.wikipedia.org/wiki/The_Matrix) shows a constant st
 
 ## Credit & A Known Issue 
 
-The original project is made by [@winterbe](https://github.com/winterbe). Since the server is down, I decided to encapsulate it into docker to keep this nice project could be easily serve on client side. But due to I'm not a Java guy, there's a error about `CORS` should be solved if you want to serve it on the cloud.
+The original project is made by [@winterbe](https://github.com/winterbe). Since the server is down, I decided to encapsulate it into docker to keep this nice project could be easily served on client side. But due to I'm not a Java guy, there's a error about `CORS` should be solved if you want to serve it on the cloud.
 
 ## Before Start
 
