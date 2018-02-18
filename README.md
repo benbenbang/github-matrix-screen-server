@@ -1,46 +1,75 @@
-The GitHub Matrix
-====================
-
-<blockquote>The latest commits from GitHub visualized in a Matrix-style animation.</blockquote>
-
-<img src="http://winterbe.com/image/matrix-has-you.gif">
+## Matrix Screen Saver for Mac
 
 The GitHub [Matrix](http://en.wikipedia.org/wiki/The_Matrix) shows a constant stream of recent commits from GitHub. Click on the drops to open the corresponding revision on GitHub. Use the pause/play button at the lower right corner to pause and resume the matrix animation (or press SPACE).
 
-### http://winterbe.com/projects/github-matrix/
+## Credit & A Known Issue 
 
-<img src="http://winterbe.com/image/matrix.png">
+The original project is made by [@winterbe](https://github.com/winterbe). Since the server is down, I decided to encapsulate it into docker to keep this nice project could be easily serve on client side. But due to I'm not a Java guy, there's a error about `CORS` should be solved if you want to serve it on the cloud.
 
----
+## Before Start
 
-<p align="center">
-<strong>★★★ Like this project? <a href="https://github.com/winterbe/github-matrix/stargazers">Leave a star</a>, <a href="https://twitter.com/winterbe_">follow on Twitter</a> or <a href="https://www.paypal.me/winterbe">donate</a> to support my work! Thanks. ★★★</strong>
-</p>
+Before you start, you will need to prepare:
 
-## Screensaver
+- A Github account to create your own API Token
+  - Go to settings → Developer settings → Personal Assess Tokens → Generate new token
+  - In the *Edit personal access token* section, you don't need to select any scope; for this application, **public access** will be enough.
+- If you want to host it locally, you will need to install `docker`. Please go to their [official site](https://www.docker.com/docker-mac) to download and install it.
+- Otherwise, you will need a AWS account which offer 1 year free-tier and also need to fix the `CORS` issue.
 
-The GitHub Matrix is also available as [Screensaver](https://github.com/winterbe/github-matrix-screensaver) for Mac OSX. Enjoy!
+## Run in Localhost
 
-## Be your own operator
+1. After install docker, please download `Dockerfile` from [here](https://d.pr/f/zcFGxn)
 
-The GitHub Matrix is a [Spring Boot](http://projects.spring.io/spring-boot/) webapp written in Java 8. You need JDK 8 + Maven 3 preinstalled in order to run the app by yourself. [Fork](https://github.com/winterbe/github-matrix/fork) and clone the repository to your local machine, then `cd` into the project directory and run the following command:
+2. Run the following code:
 
-```bash
-$ echo "apiToken=YOUR_API_TOKEN" >> src/main/resources/application.properties 
-$ mvn package
-$ java -jar target/*.jar -XX:MaxMetaspaceSize=64m -Xmx256m -Djava.awt.headless=true
-```
+   ```bash
+   # First test your docker have properly installed
+   # You might see some output with "hello world" from docker :)
+   $ sudo docker run hello-world
+   $ export API_KEY="PASTE YOUR GITHUB API KEY HERE"
+   $ sudo docker build --build-arg GITHUB_API_KEY=${API_KEY} -t matrix -f matrix.Dockerfile ./
+   $ sudo docker run -d -p 8080:8080 --name matrix matrix
+   ```
 
-<blockquote>You have to create your own GitHub API Token. Go to your "GitHub Account Settings", choose "Personal access tokens" then click "Generate New Token". Make sure you don't accidentally push your API token to GitHub (as I did in the past). Alternatively just pass the token as system property: java ... -DapiToken=YOUR_API_TOKEN</blockquote>
+3. Download the screen saver file [here](https://d.pr/f/5RQH2l), and then open your terminal (or iTerm…you name it) on your Mac, and run `tar -xzf WebViewScreenSaver.tar.gz`
 
-## Compatibility
+4. Double click on `WebViewScreenSaver.saver` file to install it
 
-The GitHub Matrix frontend is written in JavaScript and HTML5 (Canvas). It's heavily tested and optimized for current desktop browser versions (Chrome, Firefox, Safari) and mobile iOS Safari + Android Chrome. If you find any issues related to Internet Explorer or other browsers, please let me know.
+5. Go to `System Prefenerences > Desktop & Screen Saver `, click on `WebViewScreenSaver > Screen Saver Options…`. 
+
+   - Check that the default value is `localhost:8080` 
+   - Check the `fetch` option and paste `http://localhost:8080` into it.
+
+6. Enjoy your Matrix screen saver!
 
 ## Contribute
 
-Feel free to [fork](https://github.com/winterbe/github-matrix/fork) this project and send me pull requests. You can also send me feedback via [Twitter](https://twitter.com/benontherun) or by [opening an issue](https://github.com/winterbe/github-matrix/issues).
+Feel free to [fork](https://github.com/benbenbang/github-matrix-screen-server/fork) this project and send me pull requests. You can also send me feedback by [opening an issue](https://github.com/benbenbang/github-matrix-screen-server/issues).
 
 ## License
 
 The source code is published under the MIT license. If you reuse parts of the code for your own projects please preserve information about me as original author visible in your application.
+
+## Appendix
+
+``` dockerfile
+FROM maven:3.5.2-slim
+LABEL version="1.0"
+LABEL maintainer="bn<at>m11n.io"
+EXPOSE 8080
+ARG GITHUB_API_KEY
+
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV API_KEY=$GITHUB_API_KEY
+
+RUN apt update
+RUN apt install -y git
+
+WORKDIR /home
+RUN git clone https://github.com/benbenbang/github-matrix-screen-server
+VOLUME /home/github-matrix-screen-server
+WORKDIR /home/github-matrix-screen-server
+
+CMD ["/bin/bash", "matrix.sh"]
+```
+
